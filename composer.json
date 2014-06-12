@@ -1,0 +1,21 @@
+{
+    "name": "nepstor/yii2-datetime-compare-validator",
+    "description": "Yii2 validator for compare datetime.",
+    "keywords": ["yii2", "datetime", "validator", "extension"],
+    "homepage": "https://github.com/nepstor/yii2-datetime-compare-validator",
+    "type": "yii2-extension","license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Nikita Krytskiy"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "nepstor\\validators\\": ""
+        }
+    }
+}
