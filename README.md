@@ -2,7 +2,21 @@ yii2-datetime-compare-validator
 ===============================
 Validator for yii2 allows you to compare dates.
 
-using
+Installation
+------------
+The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
+
+Either run
+```sh
+php composer.phar require nepstor/yii2-datetime-compare-validator "*"
+```
+or add
+```json
+"nepstor/yii2-datetime-compare-validator": "*"
+```
+to the require section of your `composer.json` file.
+
+Using
 ===============================
 ```php
 public function rules()
@@ -12,4 +26,3 @@ public function rules()
     ];
 }
 ```
-    
