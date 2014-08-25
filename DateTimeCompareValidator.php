@@ -95,7 +95,7 @@ class DateTimeCompareValidator extends Validator
         }
 
         if (!$compareValueDT instanceof DateTime) {
-            $this->addError($model, isset($compareAttribute) ? $attribute : $compareAttribute, Yii::t('yii', 'Invalid compare value date format: {value}'), ['{value}' => $compareValue]);
+            $this->addError($model, isset($compareAttribute) ? $compareAttribute : $compareAttribute, Yii::t('yii', 'Invalid compare value date format: {value}'), ['{value}' => $compareValue]);
             return null;
         }
 
