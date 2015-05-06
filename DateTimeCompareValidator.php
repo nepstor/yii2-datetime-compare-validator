@@ -32,7 +32,7 @@ class DateTimeCompareValidator extends Validator
     public $compareAttribute;
 
     /**
-     * @var string the constant value to be compared with
+     * @var string|\DateTime the constant value to be compared with
      */
     public $compareValue;
 
@@ -85,7 +85,11 @@ class DateTimeCompareValidator extends Validator
         }
 
         $valueDT = DateTime::createFromFormat($this->format, $value);
-        $compareValueDT = DateTime::createFromFormat($this->format, $compareValue);
+        if ($compareValue instanceof DateTime ) {
+            $compareValueDT = $compareValue;
+        } else {
+            $compareValueDT = DateTime::createFromFormat($this->format, $compareValue);
+        }
 
         if (!$valueDT instanceof DateTime) {
             $this->addError($model, $attribute, Yii::t('yii', 'Invalid value date format: {value}'), [
