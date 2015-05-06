@@ -75,31 +75,32 @@ class DateTimeCompareValidator extends Validator
             return null;
         }
 
-        if ($this->compareValue !== null) {
-            $compareTo = $this->compareValue;
-            $compareValue = $this->compareValue;
-        } else {
+        if ($this->compareValue === null) {
             $compareAttribute = $this->compareAttribute;
             $compareValue = $model->$compareAttribute;
             $compareTo = $model->getAttributeLabel($compareAttribute);
+            $compareValueDT = DateTime::createFromFormat($this->format, $compareValue);
+        } elseif ($this->compareValue instanceof DateTime) {
+            $compareTo = $this->compareValue->format($this->format);
+            $compareValue = $compareTo;
+            $compareValueDT = $this->compareValue;
+        } else {
+            $compareTo = $this->compareValue;
+            $compareValue = $this->compareValue;
+            $compareValueDT = DateTime::createFromFormat($this->format, $this->compareValue);
+        }
+
+        if (!$compareValueDT instanceof DateTime) {
+            $this->addError($model, null !== $this->compareAttribute ? $compareAttribute : $attribute, Yii::t('yii', 'Invalid compare value date format: {value}'), ['{value}' => $compareValue]);
+            return null;
         }
 
         $valueDT = DateTime::createFromFormat($this->format, $value);
-        if ($compareValue instanceof DateTime ) {
-            $compareValueDT = $compareValue;
-        } else {
-            $compareValueDT = DateTime::createFromFormat($this->format, $compareValue);
-        }
 
         if (!$valueDT instanceof DateTime) {
             $this->addError($model, $attribute, Yii::t('yii', 'Invalid value date format: {value}'), [
                 '{value}' => $value
             ]);
-            return null;
-        }
-
-        if (!$compareValueDT instanceof DateTime) {
-            $this->addError($model, isset($compareAttribute) ? $compareAttribute : $compareAttribute, Yii::t('yii', 'Invalid compare value date format: {value}'), ['{value}' => $compareValue]);
             return null;
         }
 
