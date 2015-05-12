@@ -22,7 +22,7 @@ Using
 public function rules()
 {
     return [
-        [['begin', nepstor\validators\DateTimeCompareValidator::className(), 'compareAttribute' => 'end', 'format' => 'Y-m-d', 'operator' => '>='
+        ['begin', nepstor\validators\DateTimeCompareValidator::className(), 'compareAttribute' => 'end', 'format' => 'Y-m-d', 'operator' => '>=']
     ];
 }
 ```
