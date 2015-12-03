@@ -8,11 +8,11 @@ The preferred way to install this extension is through [composer](http://getcomp
 
 Either run
 ```sh
-php composer.phar require nepstor/yii2-datetime-compare-validator "*"
+php composer.phar require nepstor/yii2-datetime-compare-validator "1.0.0"
 ```
 or add
 ```json
-"nepstor/yii2-datetime-compare-validator": "*"
+"nepstor/yii2-datetime-compare-validator": "1.0.0"
 ```
 to the require section of your `composer.json` file.
 
