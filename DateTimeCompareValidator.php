@@ -7,10 +7,12 @@
 
 namespace nepstor\validators;
 
-use Yii;
-use yii\base\Exception;
-use yii\validators\Validator;
 use DateTime;
+use Yii;
+use nepstor\validators\DateTimeCompareValidator;
+use yii\base\Exception;
+use yii\helpers\Html;
+use yii\validators\Validator;
 
 /**
  * Class DateTimeCompareValidator
@@ -56,6 +58,19 @@ class DateTimeCompareValidator extends Validator
      */
     public $operator = '=';
 
+    /**
+     * @var array error messages list
+     */
+    private $_messages;
+    
+    /**
+     * @var array permitted operations
+     */
+    private $_permittedOperations = ['!=', '!==', '<', '<=', '==', '===', '>', '>='];
+    
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
@@ -63,6 +78,25 @@ class DateTimeCompareValidator extends Validator
         if ($this->isEmpty($this->compareAttribute) && $this->isEmpty($this->compareValue)) {
             throw new Exception(Yii::t('app', 'You must specify compareAttribute or compareValue'));
         }
+        
+        $this->_messages = [
+            '!=' => Yii::t('yii', '{attribute} must not be equal to "{compareValue}".'),
+            '!==' => Yii::t('yii', '{attribute} must not be equal to "{compareValue}".'),
+            '<' => Yii::t('yii', '{attribute} must be less than "{compareValue}".'),
+            '<=' => Yii::t('yii', '{attribute} must be less than or equal to "{compareValue}".'),
+            '==' => Yii::t('yii', '{attribute} must be repeated exactly.'),
+            '===' =>  Yii::t('yii', '{attribute} must be repeated exactly.'),
+            '>' => Yii::t('yii', '{attribute} must be greater than "{compareValue}".'),
+            '>=' => Yii::t('yii', '{attribute} must be greater than or equal to "{compareValue}".'),
+        ];
+        
+        if (!in_array($this->operator, $this->_permittedOperations)) {
+            throw new InvalidConfigException("Unknown operator: {$this->operator}");
+        }
+        
+        if ($this->message === null) {
+            $this->message = $this->_messages[$this->operator];
+        }        
     }
 
     /**
@@ -107,38 +141,34 @@ class DateTimeCompareValidator extends Validator
         switch ($this->operator) {
             case '=':
                 if ($valueDT != $compareValueDT) {
-                    $message = $this->message !== null ? $this->message : Yii::t('yii', '{attribute} must be repeated exactly.');
+                    $message = $this->_messages[$this->operator];
                 }
                 break;
             case '!=':
                 if ($valueDT == $compareValueDT) {
-                    $message = $this->message !== null ? $this->message : Yii::t('yii', '{attribute} must not be equal to "{compareValue}".');
+                    $message = $this->_messages[$this->operator];
                 }
                 break;
             case '>':
                 if ($valueDT <= $compareValueDT) {
-                    $message = $this->message !== null ? $this->message : Yii::t('yii', '{attribute} must be greater than "{compareValue}".');
+                    $message = $this->_messages[$this->operator];
                 }
                 break;
             case '>=':
                 if ($valueDT < $compareValueDT) {
-                    $message = $this->message !== null ? $this->message : Yii::t('yii', '{attribute} must be greater than or equal to "{compareValue}".');
+                    $message = $this->_messages[$this->operator];
                 }
                 break;
             case '<':
                 if ($valueDT >= $compareValueDT) {
-                    $message = $this->message !== null ? $this->message : Yii::t('yii', '{attribute} must be less than "{compareValue}".');
+                    $message = $this->_messages[$this->operator];
                 }
                 break;
             case '<=':
                 if ($valueDT > $compareValueDT) {
-                    $message = $this->message !== null ? $this->message : Yii::t('yii', '{attribute} must be less than or equal to "{compareValue}".');
+                    $message = $this->_messages[$this->operator];
                 }
                 break;
-            default:
-                throw new Exception(Yii::t('yii', 'Invalid operator "{operator}".', [
-                    '{operator}' => $this->operator
-                ]));
         }
 
         if (!empty($message)) {
@@ -149,4 +179,34 @@ class DateTimeCompareValidator extends Validator
         }
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function clientValidateAttribute($model, $attribute, $view)
+    {
+        DateTimeCompareValidatorAsset::register($view);
+        
+        $jsOptions['operator'] = $this->operator;
+        
+        if ($this->compareValue === null) {
+            $compareAttribute = $this->compareAttribute;
+            $compareValue = $model->getAttributeLabel($compareAttribute);
+            $jsOptions['compareAttribute'] = Html::getInputId($model, $compareAttribute);
+        } else {
+            $compareValue = $this->compareValue;
+            $jsOptions['compareValue'] = $compareValue;
+        }
+        
+        if ($this->skipOnEmpty) {
+            $jsOptions['skipOnEmpty'] = 1;
+        }
+        
+        $jsOptions['message'] = Yii::$app->getI18n()->format($this->message, [
+            'attribute' => $model->getAttributeLabel($attribute),
+            'compareAttribute' => $compareValue,
+            'compareValue' => $compareValue,
+        ], Yii::$app->language);
+        
+        return 'yii.validation.datetimecompare(value, messages, ' . json_encode($jsOptions, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ');'; 
+    }
 }
