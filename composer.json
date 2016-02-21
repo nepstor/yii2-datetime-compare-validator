@@ -11,6 +11,7 @@
   "homepage": "https://github.com/nepstor/yii2-datetime-compare-validator",
   "type": "yii2-extension",
   "license": "BSD-3-Clause",
+  "minimum-stability": "stable",
   "authors": [
     {
       "name": "Nikita Krytskiy"
