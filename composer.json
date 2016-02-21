@@ -1,22 +1,31 @@
 {
-    "name": "nepstor/yii2-datetime-compare-validator",
-    "description": "Yii2 validator for compare datetime.",
-    "keywords": ["yii2", "datetime", "validator", "extension"],
-    "homepage": "https://github.com/nepstor/yii2-datetime-compare-validator",
-    "type": "yii2-extension","license": "BSD-3-Clause",
-    "authors": [
-        {
-            "name": "Nikita Krytskiy"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "yiisoft/yii2": "*",
-        "bower-asset/moment": "2.11.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "nepstor\\validators\\": ""
-        }
+  "name": "nepstor/yii2-datetime-compare-validator",
+  "description": "Yii2 validator for compare datetime.",
+  "keywords": [
+    "yii2",
+    "datetime",
+    "datetime compare",
+    "validator",
+    "extension"
+  ],
+  "homepage": "https://github.com/nepstor/yii2-datetime-compare-validator",
+  "type": "yii2-extension",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Nikita Krytskiy"
     }
+  ],
+  "require": {
+    "yiisoft/yii2": "*",
+    "bower-asset/moment": "2.11.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.0.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "nepstor\\validators\\": "src"
+    }
+  }
 }

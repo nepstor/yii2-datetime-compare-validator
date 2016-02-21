@@ -9,7 +9,6 @@ namespace nepstor\validators;
 
 use DateTime;
 use Yii;
-use nepstor\validators\DateTimeCompareValidator;
 use yii\base\Exception;
 use yii\helpers\Html;
 use yii\validators\Validator;
@@ -27,6 +26,13 @@ class DateTimeCompareValidator extends Validator
      * supported formats.
      */
     public $format = 'Y-m-d';
+
+    /**
+     * @var string the date format that the value being validated should follow.
+     * Used to correctly work with momentjs
+     * Please refer to <http://momentjs.com/docs/> on supported formats.
+     */
+    public $jsFormat = 'YYYY-MM-DD';
 
     /**
      * @var string the name of the attribute to be compared with
@@ -66,7 +72,7 @@ class DateTimeCompareValidator extends Validator
     /**
      * @var array permitted operations
      */
-    private $_permittedOperations = ['!=', '!==', '<', '<=', '==', '===', '>', '>='];
+    private $_permittedOperations = ['!=', '<', '<=', '=', '>', '>='];
     
     /**
      * @inheritdoc
@@ -81,11 +87,9 @@ class DateTimeCompareValidator extends Validator
         
         $this->_messages = [
             '!=' => Yii::t('yii', '{attribute} must not be equal to "{compareValue}".'),
-            '!==' => Yii::t('yii', '{attribute} must not be equal to "{compareValue}".'),
             '<' => Yii::t('yii', '{attribute} must be less than "{compareValue}".'),
             '<=' => Yii::t('yii', '{attribute} must be less than or equal to "{compareValue}".'),
-            '==' => Yii::t('yii', '{attribute} must be repeated exactly.'),
-            '===' =>  Yii::t('yii', '{attribute} must be repeated exactly.'),
+            '=' => Yii::t('yii', '{attribute} must be repeated exactly.'),
             '>' => Yii::t('yii', '{attribute} must be greater than "{compareValue}".'),
             '>=' => Yii::t('yii', '{attribute} must be greater than or equal to "{compareValue}".'),
         ];
@@ -185,9 +189,10 @@ class DateTimeCompareValidator extends Validator
     public function clientValidateAttribute($model, $attribute, $view)
     {
         DateTimeCompareValidatorAsset::register($view);
-        
+
         $jsOptions['operator'] = $this->operator;
-        
+        $jsOptions['format'] = $this->jsFormat;
+
         if ($this->compareValue === null) {
             $compareAttribute = $this->compareAttribute;
             $compareValue = $model->getAttributeLabel($compareAttribute);
@@ -196,7 +201,7 @@ class DateTimeCompareValidator extends Validator
             $compareValue = $this->compareValue;
             $jsOptions['compareValue'] = $compareValue;
         }
-        
+
         if ($this->skipOnEmpty) {
             $jsOptions['skipOnEmpty'] = 1;
         }

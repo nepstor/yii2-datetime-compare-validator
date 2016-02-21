@@ -18,7 +18,7 @@ class DateTimeCompareValidatorAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    public $sourcePath = '@vendor/nepstor/yii2-datetime-compare-validator/assets';
+    public $sourcePath = '@vendor/nepstor/yii2-datetime-compare-validator/src/assets';
     
     /**
      * @inheritdoc
