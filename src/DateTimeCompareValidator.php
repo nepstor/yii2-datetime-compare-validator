@@ -54,7 +54,7 @@ class DateTimeCompareValidator extends Validator
      * @var string the operator for comparison. Defaults to '='.
      * The followings are valid operators:
      * <ul>
-     * <li>'=' or '==': validates to see if the two values are equal;</li>
+     * <li>'=': validates to see if the two values are equal;</li>
      * <li>'!=': validates to see if the two values are NOT equal;</li>
      * <li>'>': validates to see if the value being validated is greater than the value being compared with;</li>
      * <li>'>=': validates to see if the value being validated is greater than or equal to the value being compared with;</li>
@@ -97,10 +97,10 @@ class DateTimeCompareValidator extends Validator
         if (!in_array($this->operator, $this->_permittedOperations)) {
             throw new InvalidConfigException("Unknown operator: {$this->operator}");
         }
-        
+
         if ($this->message === null) {
             $this->message = $this->_messages[$this->operator];
-        }        
+        }
     }
 
     /**
@@ -142,44 +142,36 @@ class DateTimeCompareValidator extends Validator
             return null;
         }
 
-        switch ($this->operator) {
-            case '=':
-                if ($valueDT != $compareValueDT) {
-                    $message = $this->_messages[$this->operator];
-                }
-                break;
-            case '!=':
-                if ($valueDT == $compareValueDT) {
-                    $message = $this->_messages[$this->operator];
-                }
-                break;
-            case '>':
-                if ($valueDT <= $compareValueDT) {
-                    $message = $this->_messages[$this->operator];
-                }
-                break;
-            case '>=':
-                if ($valueDT < $compareValueDT) {
-                    $message = $this->_messages[$this->operator];
-                }
-                break;
-            case '<':
-                if ($valueDT >= $compareValueDT) {
-                    $message = $this->_messages[$this->operator];
-                }
-                break;
-            case '<=':
-                if ($valueDT > $compareValueDT) {
-                    $message = $this->_messages[$this->operator];
-                }
-                break;
-        }
-
-        if (!empty($message)) {
-            $this->addError($model, $attribute, $message, [
+        if ($this->isComparisonFalse($valueDT, $compareValueDT)) {
+            $this->addError($model, $attribute, $this->message, [
                 'compareAttribute' => $compareTo,
                 'compareValue' => $compareValue
             ]);
+        }
+    }
+
+    /**
+     * Compares two values
+     * @param $valueDT compared value
+     * @param $compareValueDT compared value
+     * @return boolean
+     */
+    private function isComparisonFalse($valueDT, $compareValueDT)
+    {
+        switch ($this->operator) {
+            case '=':
+                return $valueDT != $compareValueDT;
+            case '!=':
+                return $valueDT == $compareValueDT;
+            case '>':
+                return $valueDT <= $compareValueDT;
+
+            case '>=':
+                return $valueDT < $compareValueDT;
+            case '<':
+                return $valueDT >= $compareValueDT;
+            case '<=':
+                return $valueDT > $compareValueDT;
         }
     }
 
