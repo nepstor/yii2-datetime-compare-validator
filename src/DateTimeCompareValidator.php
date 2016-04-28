@@ -86,12 +86,12 @@ class DateTimeCompareValidator extends Validator
         }
         
         $this->_messages = [
-            '!=' => Yii::t('yii', '{attribute} must not be equal to "{compareValue}".'),
-            '<' => Yii::t('yii', '{attribute} must be less than "{compareValue}".'),
-            '<=' => Yii::t('yii', '{attribute} must be less than or equal to "{compareValue}".'),
-            '=' => Yii::t('yii', '{attribute} must be repeated exactly.'),
-            '>' => Yii::t('yii', '{attribute} must be greater than "{compareValue}".'),
-            '>=' => Yii::t('yii', '{attribute} must be greater than or equal to "{compareValue}".'),
+            '!=' => Yii::t('yii', '{attribute} must not be equal to "{compareValueOrAttribute}".'),
+            '<' => Yii::t('yii', '{attribute} must be less than "{compareValueOrAttribute}".'),
+            '<=' => Yii::t('yii', '{attribute} must be less than or equal to "{compareValueOrAttribute}".'),
+            '=' => Yii::t('yii', '{attribute} must be equal to "{compareValueOrAttribute}".'),
+            '>' => Yii::t('yii', '{attribute} must be greater than "{compareValueOrAttribute}".'),
+            '>=' => Yii::t('yii', '{attribute} must be greater than or equal to "{compareValueOrAttribute}".'),
         ];
         
         if (!in_array($this->operator, $this->_permittedOperations)) {
@@ -118,14 +118,17 @@ class DateTimeCompareValidator extends Validator
             $compareValue = $model->$compareAttribute;
             $compareTo = $model->getAttributeLabel($compareAttribute);
             $compareValueDT = DateTime::createFromFormat($this->format, $compareValue);
+            $compareValueOrAttribute = $compareTo;
         } elseif ($this->compareValue instanceof DateTime) {
             $compareTo = $this->compareValue->format($this->format);
             $compareValue = $compareTo;
             $compareValueDT = $this->compareValue;
+            $compareValueOrAttribute = $compareValue;
         } else {
             $compareTo = $this->compareValue;
             $compareValue = $this->compareValue;
             $compareValueDT = DateTime::createFromFormat($this->format, $this->compareValue);
+            $compareValueOrAttribute = $compareValue;
         }
 
         if (!$compareValueDT instanceof DateTime) {
@@ -145,7 +148,8 @@ class DateTimeCompareValidator extends Validator
         if ($this->isComparisonFalse($valueDT, $compareValueDT)) {
             $this->addError($model, $attribute, $this->message, [
                 'compareAttribute' => $compareTo,
-                'compareValue' => $compareValue
+                'compareValue' => $compareValue,
+            	'compareValueOrAttribute' => $compareValueOrAttribute
             ]);
         }
     }
@@ -165,7 +169,6 @@ class DateTimeCompareValidator extends Validator
                 return $valueDT == $compareValueDT;
             case '>':
                 return $valueDT <= $compareValueDT;
-
             case '>=':
                 return $valueDT < $compareValueDT;
             case '<':
@@ -202,6 +205,7 @@ class DateTimeCompareValidator extends Validator
             'attribute' => $model->getAttributeLabel($attribute),
             'compareAttribute' => $compareValue,
             'compareValue' => $compareValue,
+            'compareValueOrAttribute' => $compareValue
         ], Yii::$app->language);
         
         return 'yii.validation.datetimecompare(value, messages, ' . json_encode($jsOptions, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ');'; 
