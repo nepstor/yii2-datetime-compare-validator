@@ -19,7 +19,7 @@
   ],
   "require": {
     "yiisoft/yii2": "*",
-    "bower-asset/moment": "2.11.1"
+    "bower-asset/moment": "2.14.1"
   },
   "require-dev": {
     "phpunit/phpunit": "5.0.*"
